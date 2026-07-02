@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>10岁进阶英语打卡营 V2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Edu+SA+Beginner:wght@500;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; }
+        .edu-font { font-family: 'Edu SA Beginner', cursive; }
+        .tab-btn.active { color: #4f46e5; font-weight: 800; border-top: 3px solid #4f46e5; }
+        .tab-btn { border-top: 3px solid transparent; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .playing-anim { animation: bounce 1s infinite; color: #fbbf24 !important; opacity: 1 !important; transform: scale(1.2); }
+    .animate-shake { animation: shake 0.5s; }
+@keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+    </style>
+</head>
+<body class="flex justify-center items-center h-[100dvh] w-screen sm:p-6 overflow-hidden m-0">
+<div id="app" class="glass-card w-full h-full sm:max-w-[420px] sm:h-[85vh] sm:rounded-3xl flex flex-col overflow-hidden relative">
+    
+    <header class="flex-none bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 text-center relative shadow-lg z-20">
+        <button id="homeBtn" onclick="goHome()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 px-3 py-2 rounded-xl transition text-sm font-bold backdrop-blur-sm hidden"><i class="fas fa-chevron-left"></i> 返回</button>
+        <h1 id="dayTitle" class="text-xl font-extrabold tracking-wide">📖 学习目录</h1>
+        <div id="progressText" class="text-indigo-100 text-xs font-bold mt-1 opacity-90"></div>
+    </header>
+
+    <div id="contentArea" class="flex-1 overflow-y-auto bg-slate-50 relative p-4 pb-8 z-0">
+    </div>
+
+    <nav id="moduleTabs" class="flex-none bg-white border-t border-slate-200 flex justify-around pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-20 hidden">
+        <button onclick="switchTab('listen')" class="tab-btn active flex-1 py-3 text-slate-400 flex flex-col items-center gap-1 transition"><i class="fas fa-headphones text-xl"></i><span class="text-[10px] uppercase tracking-wider">听 Listen</span></button>
+        <button onclick="switchTab('speak')" class="tab-btn flex-1 py-3 text-slate-400 flex flex-col items-center gap-1 transition"><i class="fas fa-microphone-alt text-xl"></i><span class="text-[10px] uppercase tracking-wider">说 Speak</span></button>
+        
+        <button onclick="switchTab('write')" class="tab-btn flex-1 py-3 text-slate-400 flex flex-col items-center gap-1 transition"><i class="fas fa-pen-nib text-xl"></i><span class="text-[10px] uppercase tracking-wider">写 Write</span></button>
+    </nav>
+</div>
+
+<script>
+const DB = [{"day": 1, "title": "Day 1: Unit 1: 新朋友与学校 - Part 1", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "Hello! I'm Zoom.", "phonetic": "", "zh": "你好！我是Zoom。"}, {"en": "hello", "phonetic": "/həˈləʊ/", "zh": "你好"}], "letters": ["Aa", "Bb", "Cc", "Dd"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你好</b>", "options": ["hello", "duck", "bear"], "answer": 0}}, {"day": 2, "title": "Day 2: Unit 1: 新朋友与学校 - Part 2", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "What's your name?", "phonetic": "", "zh": "你叫什么名字？"}, {"en": "name", "phonetic": "/neɪm/", "zh": "名字"}], "letters": ["Ee", "Ff", "Gg", "Hh"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你叫什么名字？</b>", "options": ["What's your name?", "bear", "red"], "answer": 0}}, {"day": 3, "title": "Day 3: Unit 1: 新朋友与学校 - Part 3", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "I have a ruler.", "phonetic": "", "zh": "我有一把尺子。"}, {"en": "ruler", "phonetic": "/ˈruː.lər/", "zh": "尺子"}], "letters": ["Ii", "Jj", "Kk", "Ll"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我有一把尺子。</b>", "options": ["dog", "face", "I have a ruler."], "answer": 2}}, {"day": 4, "title": "Day 4: Unit 1: 新朋友与学校 - Part 4", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "Open your book.", "phonetic": "", "zh": "打开你的书。"}, {"en": "pencil", "phonetic": "/ˈpen.səl/", "zh": "铅笔"}], "letters": ["Mm", "Nn", "Oo", "Pp"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>铅笔</b>", "options": ["pencil", "water", "three"], "answer": 0}}, {"day": 5, "title": "Day 5: Unit 1: 新朋友与学校 - 小复习", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "Hello! I'm Zoom.", "phonetic": "", "zh": "你好！我是Zoom。"}, {"en": "hello", "phonetic": "/həˈləʊ/", "zh": "你好"}, {"en": "name", "phonetic": "/neɪm/", "zh": "名字"}, {"en": "ruler", "phonetic": "/ˈruː.lər/", "zh": "尺子"}, {"en": "pencil", "phonetic": "/ˈpen.səl/", "zh": "铅笔"}, {"en": "eraser", "phonetic": "/ɪˈreɪ.zər/", "zh": "橡皮"}], "letters": ["Qq", "Rr", "Ss", "Tt"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你好</b>", "options": ["hello", "apple", "blue"], "answer": 0}}, {"day": 6, "title": "Day 6: Unit 1: 新朋友与学校 - Part 6", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "What's your name?", "phonetic": "", "zh": "你叫什么名字？"}, {"en": "bag", "phonetic": "/bæɡ/", "zh": "书包"}], "letters": ["Uu", "Vv", "Ww", "Xx"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>书包</b>", "options": ["bag", "ruler", "four"], "answer": 0}}, {"day": 7, "title": "Day 7: Unit 1: 新朋友与学校 - Part 7", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "I have a ruler.", "phonetic": "", "zh": "我有一把尺子。"}, {"en": "pen", "phonetic": "/pen/", "zh": "钢笔"}], "letters": ["Yy", "Zz"], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>钢笔</b>", "options": ["plate", "pen", "bread"], "answer": 1}}, {"day": 8, "title": "Day 8: Unit 1: 新朋友与学校 - Part 8", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "Open your book.", "phonetic": "", "zh": "打开你的书。"}, {"en": "book", "phonetic": "/bʊk/", "zh": "书"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>打开你的书。</b>", "options": ["Open your book.", "one", "monkey"], "answer": 0}}, {"day": 9, "title": "Day 9: Unit 1: 新朋友与学校 - Part 9", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "Hello! I'm Zoom.", "phonetic": "", "zh": "你好！我是Zoom。"}, {"en": "school", "phonetic": "/skuːl/", "zh": "学校"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>学校</b>", "options": ["two", "school", "foot"], "answer": 1}}, {"day": 10, "title": "Day 10: Unit 1: 新朋友与学校 - 终极复习", "dialogues": [{"speaker": "dad", "en": "Good morning, Guangtou! Time to go to school.", "zh": "早上好，光头！该去上学了。"}, {"speaker": "son", "en": "Good morning, Dad! Where is my pencil?", "zh": "早上好，爸爸！我的铅笔在哪儿？"}, {"speaker": "mom", "en": "Here it is. And do you have your ruler?", "zh": "在这里。你带尺子了吗？"}, {"speaker": "son", "en": "Yes, I have a ruler. Goodbye, Mom!", "zh": "带了，我有一把尺子。妈妈再见！"}, {"speaker": "daughter", "en": "Bye, brother!", "zh": "哥哥再见！"}], "words": [{"en": "What's your name?", "phonetic": "", "zh": "你叫什么名字？"}, {"en": "bag", "phonetic": "/bæɡ/", "zh": "书包"}, {"en": "pen", "phonetic": "/pen/", "zh": "钢笔"}, {"en": "book", "phonetic": "/bʊk/", "zh": "书"}, {"en": "school", "phonetic": "/skuːl/", "zh": "学校"}, {"en": "teacher", "phonetic": "/ˈtiː.tʃər/", "zh": "老师"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>老师</b>", "options": ["pencil", "school", "teacher"], "answer": 2}}, {"day": 11, "title": "Day 11: Unit 2: 五彩的世界 - Part 1", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good morning!", "phonetic": "", "zh": "早上好！"}, {"en": "red", "phonetic": "/red/", "zh": "红色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>早上好！</b>", "options": ["three", "Good morning!", "apple"], "answer": 1}}, {"day": 12, "title": "Day 12: Unit 2: 五彩的世界 - Part 2", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good afternoon!", "phonetic": "", "zh": "下午好！"}, {"en": "yellow", "phonetic": "/ˈjel.əʊ/", "zh": "黄色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>黄色</b>", "options": ["four", "blue", "yellow"], "answer": 2}}, {"day": 13, "title": "Day 13: Unit 2: 五彩的世界 - Part 3", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Show me red.", "phonetic": "", "zh": "给我看看红色。"}, {"en": "green", "phonetic": "/ɡriːn/", "zh": "绿色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>绿色</b>", "options": ["water", "green", "dog"], "answer": 1}}, {"day": 14, "title": "Day 14: Unit 2: 五彩的世界 - Part 4", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "I see green.", "phonetic": "", "zh": "我看见绿色了。"}, {"en": "blue", "phonetic": "/bluː/", "zh": "蓝色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我看见绿色了。</b>", "options": ["I see green.", "pencil", "ruler"], "answer": 0}}, {"day": 15, "title": "Day 15: Unit 2: 五彩的世界 - 小复习", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good morning!", "phonetic": "", "zh": "早上好！"}, {"en": "red", "phonetic": "/red/", "zh": "红色"}, {"en": "yellow", "phonetic": "/ˈjel.əʊ/", "zh": "黄色"}, {"en": "green", "phonetic": "/ɡriːn/", "zh": "绿色"}, {"en": "blue", "phonetic": "/bluː/", "zh": "蓝色"}, {"en": "purple", "phonetic": "/ˈpɜː.pəl/", "zh": "紫色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>绿色</b>", "options": ["green", "six", "eraser"], "answer": 0}}, {"day": 16, "title": "Day 16: Unit 2: 五彩的世界 - Part 6", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good afternoon!", "phonetic": "", "zh": "下午好！"}, {"en": "white", "phonetic": "/waɪt/", "zh": "白色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>白色</b>", "options": ["three", "eraser", "white"], "answer": 2}}, {"day": 17, "title": "Day 17: Unit 2: 五彩的世界 - Part 7", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Show me red.", "phonetic": "", "zh": "给我看看红色。"}, {"en": "black", "phonetic": "/blæk/", "zh": "黑色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>黑色</b>", "options": ["water", "black", "foot"], "answer": 1}}, {"day": 18, "title": "Day 18: Unit 2: 五彩的世界 - Part 8", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "I see green.", "phonetic": "", "zh": "我看见绿色了。"}, {"en": "brown", "phonetic": "/braʊn/", "zh": "棕色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>棕色</b>", "options": ["bread", "brown", "duck"], "answer": 1}}, {"day": 19, "title": "Day 19: Unit 2: 五彩的世界 - Part 9", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good morning!", "phonetic": "", "zh": "早上好！"}, {"en": "pink", "phonetic": "/pɪŋk/", "zh": "粉色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>粉色</b>", "options": ["pink", "two", "plate"], "answer": 0}}, {"day": 20, "title": "Day 20: Unit 2: 五彩的世界 - 终极复习", "dialogues": [{"speaker": "daughter", "en": "Look at my new drawing!", "zh": "看我的新画！"}, {"speaker": "son", "en": "Wow, it is very nice. I see green and blue.", "zh": "哇，真好看。我看到了绿色和蓝色。"}, {"speaker": "mom", "en": "Show me red, Niuniu.", "zh": "妞妞，给我指一下红色。"}, {"speaker": "daughter", "en": "OK, here it is!", "zh": "好的，在这里！"}, {"speaker": "dad", "en": "Great job, kids.", "zh": "孩子们做得很棒。"}], "words": [{"en": "Good afternoon!", "phonetic": "", "zh": "下午好！"}, {"en": "white", "phonetic": "/waɪt/", "zh": "白色"}, {"en": "black", "phonetic": "/blæk/", "zh": "黑色"}, {"en": "brown", "phonetic": "/braʊn/", "zh": "棕色"}, {"en": "pink", "phonetic": "/pɪŋk/", "zh": "粉色"}, {"en": "orange", "phonetic": "/ˈɒr.ɪndʒ/", "zh": "橙色"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>黑色</b>", "options": ["black", "duck", "bear"], "answer": 0}}, {"day": 21, "title": "Day 21: Unit 3: 奇妙的身体 - Part 1", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "How are you?", "phonetic": "", "zh": "你好吗？"}, {"en": "face", "phonetic": "/feɪs/", "zh": "脸"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>脸</b>", "options": ["face", "red", "six"], "answer": 0}}, {"day": 22, "title": "Day 22: Unit 3: 奇妙的身体 - Part 2", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Let's go to school!", "phonetic": "", "zh": "我们一起去上学吧！"}, {"en": "ear", "phonetic": "/ɪər/", "zh": "耳朵"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我们一起去上学吧！</b>", "options": ["blue", "red", "Let's go to school!"], "answer": 2}}, {"day": 23, "title": "Day 23: Unit 3: 奇妙的身体 - Part 3", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Look at me.", "phonetic": "", "zh": "看看我。"}, {"en": "eye", "phonetic": "/aɪ/", "zh": "眼睛"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>眼睛</b>", "options": ["eye", "school", "apple"], "answer": 0}}, {"day": 24, "title": "Day 24: Unit 3: 奇妙的身体 - Part 4", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Clap your hands.", "phonetic": "", "zh": "拍拍你的手。"}, {"en": "nose", "phonetic": "/nəʊz/", "zh": "鼻子"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>拍拍你的手。</b>", "options": ["face", "Clap your hands.", "apple"], "answer": 1}}, {"day": 25, "title": "Day 25: Unit 3: 奇妙的身体 - 小复习", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "How are you?", "phonetic": "", "zh": "你好吗？"}, {"en": "face", "phonetic": "/feɪs/", "zh": "脸"}, {"en": "ear", "phonetic": "/ɪər/", "zh": "耳朵"}, {"en": "eye", "phonetic": "/aɪ/", "zh": "眼睛"}, {"en": "nose", "phonetic": "/nəʊz/", "zh": "鼻子"}, {"en": "mouth", "phonetic": "/maʊθ/", "zh": "嘴巴"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>耳朵</b>", "options": ["monkey", "bear", "ear"], "answer": 2}}, {"day": 26, "title": "Day 26: Unit 3: 奇妙的身体 - Part 6", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Let's go to school!", "phonetic": "", "zh": "我们一起去上学吧！"}, {"en": "arm", "phonetic": "/ɑːm/", "zh": "手臂"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>手臂</b>", "options": ["arm", "six", "apple"], "answer": 0}}, {"day": 27, "title": "Day 27: Unit 3: 奇妙的身体 - Part 7", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Look at me.", "phonetic": "", "zh": "看看我。"}, {"en": "hand", "phonetic": "/hænd/", "zh": "手"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>看看我。</b>", "options": ["bread", "Look at me.", "monkey"], "answer": 1}}, {"day": 28, "title": "Day 28: Unit 3: 奇妙的身体 - Part 8", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Clap your hands.", "phonetic": "", "zh": "拍拍你的手。"}, {"en": "head", "phonetic": "/hed/", "zh": "头"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>拍拍你的手。</b>", "options": ["apple", "red", "Clap your hands."], "answer": 2}}, {"day": 29, "title": "Day 29: Unit 3: 奇妙的身体 - Part 9", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "How are you?", "phonetic": "", "zh": "你好吗？"}, {"en": "leg", "phonetic": "/leɡ/", "zh": "腿"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你好吗？</b>", "options": ["How are you?", "face", "water"], "answer": 0}}, {"day": 30, "title": "Day 30: Unit 3: 奇妙的身体 - 终极复习", "dialogues": [{"speaker": "mom", "en": "Wash your face, Guangtou. Your face is dirty.", "zh": "洗洗你的脸，光头。你的脸有点脏。"}, {"speaker": "son", "en": "OK, Mom. Look at me! This is my clean face.", "zh": "好的，妈妈。看着我！这是我干净的脸。"}, {"speaker": "dad", "en": "Now clap your hands and stamp your foot.", "zh": "现在拍拍手，跺跺脚。"}, {"speaker": "daughter", "en": "Hahaha! I can stamp my foot too!", "zh": "哈哈哈！我也能跺脚！"}], "words": [{"en": "Let's go to school!", "phonetic": "", "zh": "我们一起去上学吧！"}, {"en": "arm", "phonetic": "/ɑːm/", "zh": "手臂"}, {"en": "hand", "phonetic": "/hænd/", "zh": "手"}, {"en": "head", "phonetic": "/hed/", "zh": "头"}, {"en": "leg", "phonetic": "/leɡ/", "zh": "腿"}, {"en": "foot", "phonetic": "/fʊt/", "zh": "脚"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>手臂</b>", "options": ["one", "arm", "blue"], "answer": 1}}, {"day": 31, "title": "Day 31: Unit 4: 动物朋友 - Part 1", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "What's that?", "phonetic": "", "zh": "那是什么？"}, {"en": "cat", "phonetic": "/kæt/", "zh": "猫"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>猫</b>", "options": ["cat", "pencil", "water"], "answer": 0}}, {"day": 32, "title": "Day 32: Unit 4: 动物朋友 - Part 2", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "Look! A funny dog.", "phonetic": "", "zh": "看！一只搞笑的狗。"}, {"en": "dog", "phonetic": "/dɒɡ/", "zh": "狗"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>看！一只搞笑的狗。</b>", "options": ["Look! A funny dog.", "blue", "pencil"], "answer": 0}}, {"day": 33, "title": "Day 33: Unit 4: 动物朋友 - Part 3", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "What's this?", "phonetic": "", "zh": "这是什么？"}, {"en": "monkey", "phonetic": "/ˈmʌŋ.ki/", "zh": "猴子"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>猴子</b>", "options": ["red", "monkey", "pencil"], "answer": 1}}, {"day": 34, "title": "Day 34: Unit 4: 动物朋友 - Part 4", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "Act like a monkey.", "phonetic": "", "zh": "模仿猴子的动作。"}, {"en": "panda", "phonetic": "/ˈpæn.də/", "zh": "熊猫"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>熊猫</b>", "options": ["panda", "juice", "foot"], "answer": 0}}, {"day": 35, "title": "Day 35: Unit 4: 动物朋友 - 小复习", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "What's that?", "phonetic": "", "zh": "那是什么？"}, {"en": "cat", "phonetic": "/kæt/", "zh": "猫"}, {"en": "dog", "phonetic": "/dɒɡ/", "zh": "狗"}, {"en": "monkey", "phonetic": "/ˈmʌŋ.ki/", "zh": "猴子"}, {"en": "panda", "phonetic": "/ˈpæn.də/", "zh": "熊猫"}, {"en": "rabbit", "phonetic": "/ˈræb.ɪt/", "zh": "兔子"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>兔子</b>", "options": ["water", "rabbit", "school"], "answer": 1}}, {"day": 36, "title": "Day 36: Unit 4: 动物朋友 - Part 6", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "Look! A funny dog.", "phonetic": "", "zh": "看！一只搞笑的狗。"}, {"en": "duck", "phonetic": "/dʌk/", "zh": "鸭子"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>看！一只搞笑的狗。</b>", "options": ["Look! A funny dog.", "apple", "juice"], "answer": 0}}, {"day": 37, "title": "Day 37: Unit 4: 动物朋友 - Part 7", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "What's this?", "phonetic": "", "zh": "这是什么？"}, {"en": "pig", "phonetic": "/pɪɡ/", "zh": "猪"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>猪</b>", "options": ["dog", "pig", "one"], "answer": 1}}, {"day": 38, "title": "Day 38: Unit 4: 动物朋友 - Part 8", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "Act like a monkey.", "phonetic": "", "zh": "模仿猴子的动作。"}, {"en": "bird", "phonetic": "/bɜːd/", "zh": "鸟"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>鸟</b>", "options": ["bird", "five", "red"], "answer": 0}}, {"day": 39, "title": "Day 39: Unit 4: 动物朋友 - Part 9", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "What's that?", "phonetic": "", "zh": "那是什么？"}, {"en": "bear", "phonetic": "/beər/", "zh": "熊"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>熊</b>", "options": ["bear", "green", "ruler"], "answer": 0}}, {"day": 40, "title": "Day 40: Unit 4: 动物朋友 - 终极复习", "dialogues": [{"speaker": "son", "en": "Look! What is that?", "zh": "看！那是什么？"}, {"speaker": "dad", "en": "It is a funny dog.", "zh": "那是一只搞笑的狗。"}, {"speaker": "daughter", "en": "I like dogs. What is this?", "zh": "我喜欢狗。这是什么？"}, {"speaker": "mom", "en": "It is a duck. Act like a duck, Guangtou!", "zh": "这是一只鸭子。光头，学一下鸭子！"}, {"speaker": "son", "en": "Quack, quack! Hahaha!", "zh": "嘎嘎！哈哈哈！"}], "words": [{"en": "Look! A funny dog.", "phonetic": "", "zh": "看！一只搞笑的狗。"}, {"en": "duck", "phonetic": "/dʌk/", "zh": "鸭子"}, {"en": "pig", "phonetic": "/pɪɡ/", "zh": "猪"}, {"en": "bird", "phonetic": "/bɜːd/", "zh": "鸟"}, {"en": "bear", "phonetic": "/beər/", "zh": "熊"}, {"en": "elephant", "phonetic": "/ˈel.ɪ.fənt/", "zh": "大象"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>大象</b>", "options": ["four", "elephant", "red"], "answer": 1}}, {"day": 41, "title": "Day 41: Unit 5: 美味食物 - Part 1", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'm hungry.", "phonetic": "", "zh": "我饿了。"}, {"en": "bread", "phonetic": "/bred/", "zh": "面包"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我饿了。</b>", "options": ["I'm hungry.", "dog", "six"], "answer": 0}}, {"day": 42, "title": "Day 42: Unit 5: 美味食物 - Part 2", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'd like some juice, please.", "phonetic": "", "zh": "我想喝点果汁。"}, {"en": "juice", "phonetic": "/dʒuːs/", "zh": "果汁"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我想喝点果汁。</b>", "options": ["school", "I'd like some juice, please.", "four"], "answer": 1}}, {"day": 43, "title": "Day 43: Unit 5: 美味食物 - Part 3", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "Can I have some water?", "phonetic": "", "zh": "我能喝点水吗？"}, {"en": "water", "phonetic": "/ˈwɔː.tər/", "zh": "水"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我能喝点水吗？</b>", "options": ["Can I have some water?", "green", "monkey"], "answer": 0}}, {"day": 44, "title": "Day 44: Unit 5: 美味食物 - Part 4", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "Let's eat!", "phonetic": "", "zh": "我们开动吧！"}, {"en": "milk", "phonetic": "/mɪlk/", "zh": "牛奶"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>我们开动吧！</b>", "options": ["Let's eat!", "face", "dog"], "answer": 0}}, {"day": 45, "title": "Day 45: Unit 5: 美味食物 - 小复习", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'm hungry.", "phonetic": "", "zh": "我饿了。"}, {"en": "bread", "phonetic": "/bred/", "zh": "面包"}, {"en": "juice", "phonetic": "/dʒuːs/", "zh": "果汁"}, {"en": "water", "phonetic": "/ˈwɔː.tər/", "zh": "水"}, {"en": "milk", "phonetic": "/mɪlk/", "zh": "牛奶"}, {"en": "egg", "phonetic": "/eɡ/", "zh": "鸡蛋"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>果汁</b>", "options": ["juice", "two", "red"], "answer": 0}}, {"day": 46, "title": "Day 46: Unit 5: 美味食物 - Part 6", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'd like some juice, please.", "phonetic": "", "zh": "我想喝点果汁。"}, {"en": "apple", "phonetic": "/ˈæp.əl/", "zh": "苹果"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>苹果</b>", "options": ["bread", "dog", "apple"], "answer": 2}}, {"day": 47, "title": "Day 47: Unit 5: 美味食物 - Part 7", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "Can I have some water?", "phonetic": "", "zh": "我能喝点水吗？"}, {"en": "banana", "phonetic": "/bəˈnɑː.nə/", "zh": "香蕉"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>香蕉</b>", "options": ["banana", "plate", "duck"], "answer": 0}}, {"day": 48, "title": "Day 48: Unit 5: 美味食物 - Part 8", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "Let's eat!", "phonetic": "", "zh": "我们开动吧！"}, {"en": "pear", "phonetic": "/peər/", "zh": "梨"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>梨</b>", "options": ["school", "three", "pear"], "answer": 2}}, {"day": 49, "title": "Day 49: Unit 5: 美味食物 - Part 9", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'm hungry.", "phonetic": "", "zh": "我饿了。"}, {"en": "orange", "phonetic": "/ˈɒr.ɪndʒ/", "zh": "橙子"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>橙子</b>", "options": ["ruler", "school", "orange"], "answer": 2}}, {"day": 50, "title": "Day 50: Unit 5: 美味食物 - 终极复习", "dialogues": [{"speaker": "son", "en": "Mom, I am hungry.", "zh": "妈妈，我饿了。"}, {"speaker": "mom", "en": "Have some bread, Guangtou. Dinner is coming.", "zh": "吃点面包吧，光头。晚饭马上就好。"}, {"speaker": "daughter", "en": "I would like some juice, please.", "zh": "请给我来点果汁。"}, {"speaker": "dad", "en": "Here you are. Can I have some water?", "zh": "给你。我能喝点水吗？"}, {"speaker": "daughter", "en": "Sure. Let's eat!", "zh": "当然。我们开动吧！"}], "words": [{"en": "I'd like some juice, please.", "phonetic": "", "zh": "我想喝点果汁。"}, {"en": "apple", "phonetic": "/ˈæp.əl/", "zh": "苹果"}, {"en": "banana", "phonetic": "/bəˈnɑː.nə/", "zh": "香蕉"}, {"en": "pear", "phonetic": "/peər/", "zh": "梨"}, {"en": "orange", "phonetic": "/ˈɒr.ɪndʒ/", "zh": "橙子"}, {"en": "cake", "phonetic": "/keɪk/", "zh": "蛋糕"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>香蕉</b>", "options": ["monkey", "banana", "foot"], "answer": 1}}, {"day": 51, "title": "Day 51: Unit 6: 数字与游戏 - Part 1", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "How old are you?", "phonetic": "", "zh": "你几岁了？"}, {"en": "one", "phonetic": "/wʌn/", "zh": "一"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>一</b>", "options": ["one", "three", "monkey"], "answer": 0}}, {"day": 52, "title": "Day 52: Unit 6: 数字与游戏 - Part 2", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "Happy birthday!", "phonetic": "", "zh": "生日快乐！"}, {"en": "two", "phonetic": "/tuː/", "zh": "二"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>二</b>", "options": ["monkey", "foot", "two"], "answer": 2}}, {"day": 53, "title": "Day 53: Unit 6: 数字与游戏 - Part 3", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "How many plates?", "phonetic": "", "zh": "需要几个盘子？"}, {"en": "three", "phonetic": "/θriː/", "zh": "三"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>需要几个盘子？</b>", "options": ["green", "water", "How many plates?"], "answer": 2}}, {"day": 54, "title": "Day 54: Unit 6: 数字与游戏 - Part 4", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "Let's count!", "phonetic": "", "zh": "我们来数数！"}, {"en": "four", "phonetic": "/fɔːr/", "zh": "四"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>四</b>", "options": ["four", "monkey", "water"], "answer": 0}}, {"day": 55, "title": "Day 55: Unit 6: 数字与游戏 - 小复习", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "How old are you?", "phonetic": "", "zh": "你几岁了？"}, {"en": "one", "phonetic": "/wʌn/", "zh": "一"}, {"en": "two", "phonetic": "/tuː/", "zh": "二"}, {"en": "three", "phonetic": "/θriː/", "zh": "三"}, {"en": "four", "phonetic": "/fɔːr/", "zh": "四"}, {"en": "five", "phonetic": "/faɪv/", "zh": "五"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你几岁了？</b>", "options": ["bear", "two", "How old are you?"], "answer": 2}}, {"day": 56, "title": "Day 56: Unit 6: 数字与游戏 - Part 6", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "Happy birthday!", "phonetic": "", "zh": "生日快乐！"}, {"en": "six", "phonetic": "/sɪks/", "zh": "六"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>六</b>", "options": ["juice", "six", "bread"], "answer": 1}}, {"day": 57, "title": "Day 57: Unit 6: 数字与游戏 - Part 7", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "How many plates?", "phonetic": "", "zh": "需要几个盘子？"}, {"en": "seven", "phonetic": "/ˈsev.ən/", "zh": "七"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>七</b>", "options": ["blue", "seven", "monkey"], "answer": 1}}, {"day": 58, "title": "Day 58: Unit 6: 数字与游戏 - Part 8", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "Let's count!", "phonetic": "", "zh": "我们来数数！"}, {"en": "eight", "phonetic": "/eɪt/", "zh": "八"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>八</b>", "options": ["pencil", "eight", "eraser"], "answer": 1}}, {"day": 59, "title": "Day 59: Unit 6: 数字与游戏 - Part 9", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "How old are you?", "phonetic": "", "zh": "你几岁了？"}, {"en": "nine", "phonetic": "/naɪn/", "zh": "九"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>你几岁了？</b>", "options": ["school", "four", "How old are you?"], "answer": 2}}, {"day": 60, "title": "Day 60: Unit 6: 数字与游戏 - 终极复习", "dialogues": [{"speaker": "dad", "en": "Happy birthday, Guangtou! How old are you?", "zh": "生日快乐，光头！你几岁了？"}, {"speaker": "son", "en": "Thank you, Dad! I am ten.", "zh": "谢谢爸爸！我十岁了。"}, {"speaker": "mom", "en": "Look at the cake! How many candles?", "zh": "看这个蛋糕！有几根蜡烛？"}, {"speaker": "daughter", "en": "Let's count! One, two, three... ten!", "zh": "我们来数一数！一，二，三……十！"}], "words": [{"en": "Happy birthday!", "phonetic": "", "zh": "生日快乐！"}, {"en": "six", "phonetic": "/sɪks/", "zh": "六"}, {"en": "seven", "phonetic": "/ˈsev.ən/", "zh": "七"}, {"en": "eight", "phonetic": "/eɪt/", "zh": "八"}, {"en": "nine", "phonetic": "/naɪn/", "zh": "九"}, {"en": "ten", "phonetic": "/ten/", "zh": "十"}], "letters": [], "quiz": {"question": "根据中文提示，选择正确的单词：<br><br><b>十</b>", "options": ["apple", "ten", "eraser"], "answer": 1}}];
+
+const audioDB = new Promise((resolve, reject) => {
+    let req = indexedDB.open("RoyEnglishDB", 1);
+    req.onupgradeneeded = e => {
+        let db = e.target.result;
+        if(!db.objectStoreNames.contains("audioStore")) {
+            db.createObjectStore("audioStore");
+        }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e);
+});
+
+async function saveAudioToDB(id, blob) {
+    try {
+        let db = await audioDB;
+        db.transaction("audioStore", "readwrite").objectStore("audioStore").put(blob, id);
+    } catch(e) { console.error("DB Save Error:", e); }
+}
+
+async function loadAudioFromDB(id) {
+    try {
+        let db = await audioDB;
+        return new Promise(resolve => {
+            let req = db.transaction("audioStore").objectStore("audioStore").get(id);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = () => resolve(null);
+        });
+    } catch(e) { return null; }
+}
+
+let currentDay = null;
+let currentTab = 'listen';
+let currentAudio = null;
+let isPlayingAll = false;
+
+
+let voiceCache = { dad: null, mom: null, son: null, daughter: null, inited: false };
+
+function initVoices() {
+    if(voiceCache.inited) return;
+    let voices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    if(voices.length === 0) return;
+    
+    let males = voices.filter(v => v.name.toLowerCase().match(/male|boy|daniel|david|mark|arthur/));
+    let females = voices.filter(v => v.name.toLowerCase().match(/female|girl|samantha|victoria|karen|moira/));
+    
+    voiceCache.dad = males[0] || voices[0];
+    voiceCache.mom = females[0] || voices[voices.length - 1];
+    voiceCache.son = males[1] || males[0] || voices[0];
+    voiceCache.daughter = females[1] || females[0] || voices[voices.length - 1];
+    
+    voiceCache.inited = true;
+}
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = initVoices;
+}
+
+function getSpeakerConfig(role) {
+    switch(role) {
+        case 'dad': return { name: '爸爸(罗威)', bg: 'bg-blue-50', border: 'border-blue-200', seed: 'Felix&hair=shortHairShortFlat&clothing=blazerAndShirt&facialHair=beardMedium', voiceType: 'dad', isLeft: true, iconColor: 'text-blue-400', textColor: 'text-slate-800' };
+        case 'mom': return { name: '妈妈(熊单)', bg: 'bg-pink-50', border: 'border-pink-200', seed: 'Jocelyn&hair=longHairStraight&clothing=collarAndSweater', voiceType: 'mom', isLeft: false, iconColor: 'text-pink-400', textColor: 'text-slate-800' };
+        case 'son': return { name: '儿子(光头)', bg: 'bg-green-50', border: 'border-green-200', seed: 'Leo&hair=noHair&clothing=graphicShirt', voiceType: 'son', isLeft: false, iconColor: 'text-green-400', textColor: 'text-slate-800' };
+        case 'daughter': return { name: '女儿(妞妞)', bg: 'bg-yellow-50', border: 'border-yellow-200', seed: 'Lily&hair=pigtails&accessories=prescription02', voiceType: 'daughter', isLeft: true, iconColor: 'text-yellow-400', textColor: 'text-slate-800' };
+        default: return { name: 'Robot', bg: 'bg-indigo-50', border: 'border-indigo-200', seed: 'bot', voiceType: 'mom', isLeft: true, iconColor: 'text-indigo-400', textColor: 'text-slate-800' };
+    }
+}
+
+function speakWithGender(text, voiceType, onComplete) {
+    initVoices();
+    if ('speechSynthesis' in window) {
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = voiceCache[voiceType];
+        utterance.rate = 0.85;
+        
+        // Use pitch to distinguish kids if they share the same voice engine
+        if (voiceType === 'son' && voiceCache.son === voiceCache.dad) utterance.pitch = 1.4;
+        else if (voiceType === 'daughter' && voiceCache.daughter === voiceCache.mom) utterance.pitch = 1.4;
+        else if (voiceType === 'dad') utterance.pitch = 0.8;
+        else if (voiceType === 'mom') utterance.pitch = 1.1;
+        
+        utterance.onend = onComplete;
+        utterance.onerror = () => playYoudaoFallback(text, (voiceType==='mom'||voiceType==='daughter'), onComplete);
+        window.speechSynthesis.speak(utterance);
+    } else {
+        playYoudaoFallback(text, (voiceType==='mom'||voiceType==='daughter'), onComplete);
+    }
+}
+
+function playYoudaoFallback(text, isFemale, onComplete) {
+    let type = isFemale ? 1 : 2;
+    currentAudio = new Audio(`https://dict.youdao.com/dictvoice?type=${type}&audio=` + encodeURIComponent(text));
+    currentAudio.onended = onComplete;
+    currentAudio.play().catch(e => {
+        console.error("Youdao fallback failed: ", e);
+        onComplete();
+    });
+}
+function playAllDialogues() {
+    let btn = document.getElementById('playAllBtn');
+    if(!btn) return;
+    
+    if(isPlayingAll) {
+        isPlayingAll = false;
+        if(currentAudio) currentAudio.pause();
+        window.speechSynthesis.cancel();
+        document.querySelectorAll('.animate-bounce').forEach(el => el.classList.remove('playing-anim'));
+        btn.innerHTML = '<i class="fas fa-play"></i> 播放全部';
+        return;
+    }
+    
+    isPlayingAll = true;
+    btn.innerHTML = '<i class="fas fa-stop"></i> 停止播放';
+    
+    let dialogues = currentDay.dialogues;
+    let index = 0;
+    
+    function playNext() {
+        if(!isPlayingAll || index >= dialogues.length) {
+            isPlayingAll = false;
+            if(btn) btn.innerHTML = '<i class="fas fa-play"></i> 播放全部';
+            return;
+        }
+        
+        let text = dialogues[index].en;
+        let isLeft = false; let voiceType = dialogues[index].speaker || 'mom';
+        let bubbleBtn = document.getElementById('dialogue-btn-' + index);
+        
+        if(currentAudio) currentAudio.pause();
+        window.speechSynthesis.cancel();
+        document.querySelectorAll('.animate-bounce').forEach(el => el.classList.remove('playing-anim'));
+        
+        if(bubbleBtn) {
+            bubbleBtn.classList.add('playing-anim');
+            bubbleBtn.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+        
+        function onComplete() {
+            if(bubbleBtn) bubbleBtn.classList.remove('playing-anim');
+            if(isPlayingAll) {
+                setTimeout(() => {
+                    index++;
+                    playNext();
+                }, 600);
+            }
+        }
+        
+        speakWithGender(text, voiceType, onComplete);
+    }
+    
+    playNext();
+}
+
+function playAudio(text, btnElement, voiceType = "mom") {
+    if(isPlayingAll) {
+        isPlayingAll = false;
+        let pbtn = document.getElementById('playAllBtn');
+        if(pbtn) pbtn.innerHTML = '<i class="fas fa-play"></i> 播放全部';
+    }
+    
+    if(currentAudio) currentAudio.pause();
+    window.speechSynthesis.cancel();
+    
+    if(btnElement) {
+        btnElement.classList.add('playing-anim');
+    }
+    
+    function onComplete() {
+        if(btnElement) btnElement.classList.remove('playing-anim');
+    }
+    
+    speakWithGender(text, voiceType, onComplete);
+}
+let mediaRecorder = null;
+let currentRecordAudioId = null;
+let recordTimeout = null;
+let audioChunks = [];
+
+function renderSavedAudioBtn(btn, url, audioId) {
+    let parent = btn.parentElement;
+    let oldOriginBtn = parent.firstElementChild.outerHTML; // Keep the '听原音' button
+    
+    parent.innerHTML = oldOriginBtn + `
+        <div class="flex-1 flex gap-1 sm:gap-2">
+            <button onclick="let a = new Audio('${url}'); a.play();" class="flex-1 bg-green-50 text-green-600 font-bold rounded-xl active:scale-95 flex flex-col items-center justify-center py-2"><i class="fas fa-play text-lg"></i><span class="text-[10px] mt-1">回放</span></button>
+            <a href="${url}" download="${audioId}.webm" class="flex-1 bg-sky-50 text-sky-600 font-bold rounded-xl active:scale-95 flex flex-col items-center justify-center py-2"><i class="fas fa-download text-lg"></i><span class="text-[10px] mt-1">保存</span></a>
+            <button onclick="toggleRecording(this.parentElement, '${audioId}')" class="flex-1 bg-rose-50 text-rose-600 font-bold rounded-xl active:scale-95 flex flex-col items-center justify-center py-2"><i class="fas fa-redo text-lg"></i><span class="text-[10px] mt-1">重录</span></button>
+        </div>
+    `;
+}
+
+async function toggleRecording(btn, audioId) {
+    if(mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+        if(recordTimeout) clearTimeout(recordTimeout);
+        return;
+    }
+    if(!navigator.mediaDevices) return alert("浏览器不支持录音，或未开启 HTTPS！");
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        currentRecordAudioId = audioId;
+        audioChunks = [];
+        
+        mediaRecorder.start();
+        
+        // Transform the clicked element into a stop button
+        btn.outerHTML = `<button id="stop-btn-${audioId}" onclick="toggleRecording(this, '${audioId}')" class="flex-1 bg-red-50 border border-red-200 text-red-600 font-bold py-3 rounded-xl active:scale-95 transition"><i class="fas fa-stop-circle text-xl animate-pulse mb-1 block"></i>录音中...点击停止</button>`;
+        
+        // Auto stop after 10 seconds
+        recordTimeout = setTimeout(() => {
+            if(mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
+        }, 10000);
+        
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            saveAudioToDB(audioId, audioBlob); // Save to IndexedDB
+            let url = URL.createObjectURL(audioBlob);
+            
+            let stopBtn = document.getElementById(`stop-btn-${audioId}`);
+            if(stopBtn) {
+                renderSavedAudioBtn(stopBtn, url, audioId);
+            }
+            stream.getTracks().forEach(t => t.stop());
+        };
+    } catch(err) {
+        alert("无法访问麦克风，请检查权限！");
+    }
+}
+
+function checkSpelling(inputEl, correctWord) {
+    if(inputEl.value.trim().toLowerCase() === correctWord.toLowerCase()) {
+        inputEl.classList.remove('border-slate-200', 'focus:border-indigo-400');
+        inputEl.classList.add('border-emerald-400', 'bg-emerald-50', 'text-emerald-600', 'shadow-inner');
+        inputEl.disabled = true;
+        confetti({ particleCount: 40, spread: 50, origin: { y: inputEl.getBoundingClientRect().top/window.innerHeight } });
+    }
+}
+
+function renderTOC() {
+    document.getElementById('moduleTabs').classList.add('hidden');
+    document.getElementById('homeBtn').classList.add('hidden');
+    document.getElementById('dayTitle').innerText = '📖 学习打卡地图';
+    
+    let completedCount = Object.keys(localStorage).filter(k => k.startsWith('v2_day_')).length;
+    document.getElementById('progressText').innerText = `已坚持 ${completedCount} 天 / 共 60 天`;
+    
+    let html = '<div class="grid grid-cols-3 gap-3">';
+    DB.forEach(d => {
+        let isDone = localStorage.getItem('v2_day_' + d.day);
+        html += `<div onclick="openDay(${d.day})" class="cursor-pointer p-3 rounded-2xl border-2 transition active:scale-95 flex flex-col items-center justify-center ${isDone ? 'border-emerald-300 bg-emerald-50 shadow-sm' : 'border-slate-100 bg-white hover:border-indigo-200 shadow-sm'}">
+            <div class="text-3xl mb-1">${isDone ? '⭐' : '📚'}</div>
+            <div class="font-extrabold text-sm ${isDone ? 'text-emerald-700' : 'text-slate-600'}">Day ${d.day}</div>
+        </div>`;
+    });
+    html += '</div>';
+    document.getElementById('contentArea').innerHTML = html;
+}
+
+function openDay(day) {
+    currentDay = DB.find(d => d.day === day);
+    document.getElementById('dayTitle').innerText = `Day ${currentDay.day}`;
+    document.getElementById('progressText').innerText = currentDay.title;
+    document.getElementById('moduleTabs').classList.remove('hidden');
+    document.getElementById('homeBtn').classList.remove('hidden');
+    switchTab('listen');
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'text-indigo-600'));
+    document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active', 'text-indigo-600');
+    
+    let content = document.getElementById('contentArea');
+    content.scrollTop = 0;
+    
+    if(tab === 'listen') {
+        let html = '<div class="flex justify-between items-center mb-4 sticky top-0 bg-slate-50/90 backdrop-blur-sm z-10 py-2"><h3 class="font-extrabold text-lg text-slate-800 flex items-center gap-2"><i class="fas fa-comments text-indigo-500"></i> 情景对话</h3><button id="playAllBtn" onclick="playAllDialogues()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-600 text-sm font-bold py-1.5 px-4 rounded-full transition shadow-sm active:scale-95 flex items-center gap-2"><i class="fas fa-play"></i> 播放全部</button></div>';
+        html += '<div class="flex flex-col gap-4 pb-4 px-1">';
+        currentDay.dialogues.forEach((d, index) => {
+            let isLeft = index % 2 === 0;
+            let avatarSeed = isLeft ? `RobotA${currentDay.day}` : `RobotB${currentDay.day}`;
+            let bgColor = isLeft ? 'bg-white border-slate-200' : 'bg-indigo-500 text-white border-indigo-600 shadow-indigo-200';
+            let textColor = isLeft ? 'text-slate-800' : 'text-white';
+            let subTextColor = isLeft ? 'text-slate-500' : 'text-indigo-100';
+            let iconColor = isLeft ? 'text-indigo-300' : 'text-indigo-300';
+            let flexDir = isLeft ? 'flex-row' : 'flex-row-reverse';
+            let bubbleBorder = isLeft ? 'rounded-tl-sm' : 'rounded-tr-sm';
+
+            html += `<div class="flex ${flexDir} items-end gap-2 sm:gap-3 w-full" style="animation: fadeIn 0.3s ease-out ${index * 0.1}s both;">
+                <div class="relative group cursor-pointer flex-shrink-0" onclick="this.querySelector('img').classList.toggle('rotate-12'); this.querySelector('img').classList.toggle('scale-110')">
+                    <div class="absolute inset-0 bg-indigo-200 rounded-full blur-md opacity-0 group-hover:opacity-50 transition"></div>
+                    <img src="https://api.dicebear.com/9.x/bottts/svg?seed=${avatarSeed}&backgroundColor=${isLeft?'eef2ff':'c7d2fe'}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-sm bg-indigo-50 border-2 border-white relative z-10 transition duration-300">
+                </div>
+                
+                <div class="max-w-[80%] p-3 sm:p-4 shadow-sm rounded-2xl ${bubbleBorder} ${bgColor} border active:scale-[0.98] transition cursor-pointer relative group flex flex-col justify-center" onclick="playAudio('${d.en.replace(/'/g, "\\'")}', this.querySelector('i.fa-volume-up'), ${isLeft})">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="text-[15px] sm:text-base font-bold ${textColor} leading-snug font-sans">${d.en}</div>
+                        <i id="dialogue-btn-${index}" class="fas fa-volume-up ${iconColor} opacity-50 group-hover:opacity-100 transition text-sm mt-1 flex-shrink-0"></i>
+                    </div>
+                    
+                    ${d.zh ? `<div class="translation-block hidden mt-2 pt-2 border-t ${isLeft ? 'border-slate-200' : 'border-indigo-400 border-opacity-50'}">
+                        <div class="text-[12px] sm:text-sm ${subTextColor}">${d.zh}</div>
+                    </div>` : ''}
+                    
+                    ${d.zh ? `<div class="mt-2 text-right">
+                        <span class="inline-block text-[10px] ${isLeft ? 'text-slate-400 bg-slate-100' : 'text-indigo-200 bg-indigo-600'} rounded px-2 py-0.5 opacity-80 hover:opacity-100 transition" onclick="event.stopPropagation(); this.parentElement.previousElementSibling.classList.toggle('hidden')"><i class="fas fa-language"></i> 译</span>
+                    </div>` : ''}
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        content.innerHTML = html;
+    }
+    else if(tab === 'speak') {
+        let html = `<div class="flex justify-between items-end mb-6">
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-800 drop-shadow-sm">角色扮演</h2>
+                <p class="text-sm text-rose-500 font-bold mt-1 tracking-wider uppercase">Dubbing Practice</p>
+            </div>
+            <button onclick="playAllDialogues()" class="bg-rose-500 text-white px-4 py-2 rounded-full font-bold shadow-md hover:bg-rose-600 active:scale-95 transition text-sm flex items-center gap-2">
+                <i class="fas fa-play"></i> 示范朗读
+            </button>
+        </div><div class="flex flex-col gap-6 pb-20">`;
+        
+        currentDay.dialogues.forEach((d, index) => {
+            let conf = getSpeakerConfig(d.speaker);
+            let audioId = `Day${currentDay.day}_Speak_${index}`;
+            let flexDir = conf.isLeft ? 'flex-row' : 'flex-row-reverse';
+            
+            html += `<div class="flex flex-col w-full" style="animation: fadeIn 0.3s ease-out ${index * 0.1}s both;">
+                <div class="flex ${flexDir} items-end gap-2 sm:gap-3 w-full">
+                    <div class="relative group cursor-pointer flex-shrink-0 text-center opacity-80" onclick="this.querySelector('img').classList.toggle('rotate-12');">
+                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=${conf.seed}&backgroundColor=${conf.bg.replace('bg-','')}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-sm bg-white border-2 border-slate-200 relative z-10 transition duration-300">
+                        <div class="text-[10px] text-slate-400 mt-1 font-bold whitespace-nowrap">${conf.name}</div>
+                    </div>
+                    
+                    <div class="max-w-[75%] p-3 sm:p-4 shadow-sm rounded-2xl ${conf.border} bg-white border active:scale-[0.98] transition relative group flex flex-col justify-center">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="text-[15px] sm:text-base font-bold text-slate-800 leading-snug font-sans">${d.en}</div>
+                        </div>
+                        
+                        <div class="mt-3 flex gap-2 justify-end" id="speak-actions-${audioId}">
+                            <button onclick="playAudio('${d.en.replace(/'/g, "\'")}', this.querySelector('i'), '${conf.voiceType}')" class="flex-1 bg-indigo-50 text-indigo-600 font-bold py-2 rounded-xl active:scale-95 transition text-sm flex items-center justify-center gap-1"><i class="fas fa-volume-up"></i> 原音</button>
+                            <button id="record-btn-${audioId}" onclick="toggleRecording(this, '${audioId}')" class="flex-1 bg-rose-50 border border-rose-100 text-rose-600 font-bold py-2 rounded-xl active:scale-95 transition text-sm flex items-center justify-center gap-1"><i class="fas fa-microphone"></i> 录制</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            loadAudioFromDB(audioId).then(blob => {
+                if(blob) {
+                    let btn = document.getElementById(`record-btn-${audioId}`);
+                    if(btn) {
+                        let url = URL.createObjectURL(blob);
+                        renderSavedAudioBtn(btn, url, audioId);
+                    }
+                }
+            });
+        });
+        html += '</div>';
+        content.innerHTML = html;
+    }
+    else if(tab === 'write') {
+        let html = '<h3 class="font-extrabold text-lg text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-pencil-ruler text-emerald-500"></i> 拼写与书写</h3>';
+        
+        if(currentDay.letters && currentDay.letters.length > 0) {
+            html += '<div class="grid grid-cols-2 gap-3 mb-6">';
+            currentDay.letters.forEach(l => {
+                html += `<div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 text-center cursor-pointer active:scale-95 transition" onclick="playAudio('${l[0]}')">
+                    <svg width="100%" height="60" viewBox="0 0 80 60" class="mx-auto block">
+                        <line x1="5" y1="10" x2="75" y2="10" stroke="#fca5a5" stroke-width="1.5" />
+                        <line x1="5" y1="24" x2="75" y2="24" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2" />
+                        <line x1="5" y1="38" x2="75" y2="38" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2" />
+                        <line x1="5" y1="52" x2="75" y2="52" stroke="#fca5a5" stroke-width="1.5" />
+                        <text x="40" y="38" font-family="'Edu SA Beginner', cursive" font-size="34" fill="#1e293b" text-anchor="middle">${l}</text>
+                    </svg>
+                    <div class="mt-2 text-xs font-bold text-emerald-600 bg-emerald-50 inline-block px-2 py-1 rounded-md"><i class="fas fa-volume-up"></i> 听音发音</div>
+                </div>`;
+            });
+            html += '</div>';
+        }
+        
+        if(currentDay.words && currentDay.words.length > 0) {
+            html += '<div class="space-y-3">';
+            currentDay.words.forEach((w) => {
+                let cleanWord = w.en.replace(/[^a-zA-Z\s]/g, '');
+                if(cleanWord.length > 1) {
+                    html += `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">翻译并拼写</div>
+                        <div class="text-lg font-extrabold text-slate-800 mb-3">${w.zh}</div>
+                        <input type="text" oninput="checkSpelling(this, '${cleanWord}')" placeholder="输入英文..." class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 text-xl font-extrabold outline-none focus:border-indigo-400 transition placeholder:font-normal placeholder:text-sm bg-slate-50 focus:bg-white text-slate-700 tracking-wider">
+                    </div>`;
+                }
+            });
+            html += '</div>';
+        }
+        
+        let isDone = localStorage.getItem('v2_day_' + currentDay.day);
+        html += `<button onclick="finishDay(this)" class="w-full mt-6 bg-gradient-to-r from-emerald-400 to-teal-500 text-white font-extrabold text-lg py-4 rounded-2xl shadow-lg hover:shadow-xl active:scale-[0.98] transition shadow-emerald-500/30" ${isDone ? 'disabled style="opacity:0.8"' : ''}>${isDone ? '✅ 今日已打卡' : '✨ 完成今日打卡 ✨'}</button>`;
+        content.innerHTML = html;
+    }
+}
+
+function finishDay(btn) {
+    localStorage.setItem('v2_day_' + currentDay.day, 'true');
+    btn.innerHTML = '✅ 今日已打卡';
+    btn.disabled = true;
+    confetti({ particleCount: 150, spread: 80, origin: { y: 0.8 }, zIndex: 100 });
+    setTimeout(goHome, 2500);
+}
+
+function goHome() { renderTOC(); }
+goHome();
+</script>
+</body>
+</html>
