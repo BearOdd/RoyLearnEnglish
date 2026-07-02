@@ -356,11 +356,11 @@ function switchTab(tab) {
     currentTab = tab;
     ['listen', 'speak', 'write'].forEach(t => {
         let btn = document.getElementById('tab-' + t);
-        if(btn) btn.classList.remove('text-indigo-600', 'scale-110');
+        if(btn) btn.classList.remove('active', 'text-indigo-600', 'scale-110');
     });
     
     let activeBtn = document.getElementById('tab-' + tab);
-    if(activeBtn) activeBtn.classList.add('text-indigo-600', 'scale-110');
+    if(activeBtn) activeBtn.classList.add('active', 'text-indigo-600', 'scale-110');
     
     let content = document.getElementById('contentArea');
     content.scrollTop = 0;
