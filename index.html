@@ -91,7 +91,7 @@ function speakWithGender(text, isLeft, onComplete) {
     initVoices();
     let isMale = !isLeft; // 左边机器人设定为女声，右边机器人设定为男声
     
-    if ('speechSynthesis' in window && window.speechSynthesis.getVoices().length > 0) {
+    if ('speechSynthesis' in window) {
         let utterance = new SpeechSynthesisUtterance(text);
         let targetVoice = isMale ? voiceCache.male : voiceCache.female;
         
@@ -119,6 +119,7 @@ function playYoudaoFallback(text, isLeft, onComplete) {
     currentAudio = new Audio(`https://dict.youdao.com/dictvoice?type=${voiceType}&audio=` + encodeURIComponent(text));
     currentAudio.onended = onComplete;
     currentAudio.play().catch(e => {
+        console.error("Youdao fallback failed: ", e);
         console.log("All TTS engines failed");
         onComplete();
     });
