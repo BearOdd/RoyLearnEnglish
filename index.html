@@ -85,6 +85,24 @@ let currentAudio = null;
 let isPlayingAll = false;
 
 
+
+function getAvatarSVG(role) {
+    const baseClass = "w-8 h-8 rounded-full border-2 border-white shadow-sm overflow-hidden bg-white";
+    if(role === 'dad') {
+        return <div class=" flex items-end justify-center bg-blue-100"><svg viewBox="0 0 100 100" class="w-6 h-6 text-blue-800"><circle cx="50" cy="35" r="20" fill="currentColor"/><path d="M20 100 C20 60, 80 60, 80 100" fill="currentColor"/><rect x="40" y="55" width="20" height="15" fill="#1e40af"/></svg></div>;
+    }
+    if(role === 'mom') {
+        return <div class=" flex items-end justify-center bg-pink-100"><svg viewBox="0 0 100 100" class="w-6 h-6 text-pink-700"><circle cx="50" cy="40" r="18" fill="currentColor"/><path d="M20 100 C20 60, 80 60, 80 100" fill="currentColor"/><path d="M30 25 C30 10, 70 10, 70 25 C80 50, 20 50, 30 25" fill="#be185d"/></svg></div>;
+    }
+    if(role === 'son') {
+        return <div class=" flex items-end justify-center bg-green-100"><svg viewBox="0 0 100 100" class="w-6 h-6 text-green-800"><circle cx="50" cy="45" r="22" fill="#dcfce3"/><circle cx="50" cy="45" r="20" fill="currentColor"/><path d="M25 100 C25 70, 75 70, 75 100" fill="currentColor"/></svg></div>;
+    }
+    if(role === 'daughter') {
+        return <div class=" flex items-end justify-center bg-yellow-100"><svg viewBox="0 0 100 100" class="w-6 h-6 text-yellow-600"><circle cx="50" cy="40" r="16" fill="currentColor"/><path d="M25 100 C25 65, 75 65, 75 100" fill="currentColor"/><circle cx="30" cy="30" r="8" fill="#ca8a04"/><circle cx="70" cy="30" r="8" fill="#ca8a04"/></svg></div>;
+    }
+    return <div class=" flex items-center justify-center bg-indigo-100"><i class="fas fa-robot text-indigo-500 text-sm"></i></div>;
+}
+
 function getSpeakerConfig(role) {
     switch(role) {
         case 'dad': return { name: '爸爸(罗威)', bg: 'bg-blue-50', bgHex: 'dbeafe', border: 'border-blue-200', seed: 'Felix', voiceType: 'dad', isLeft: true, iconColor: 'text-blue-400', textColor: 'text-slate-800' };
